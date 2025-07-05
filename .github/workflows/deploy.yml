@@ -18,9 +18,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker image
-        run: docker build -t deploybot .
-             docker tag deploybot ${{ secrets.DOCKER_USERNAME }}/deploybot:latest
-             docker push ${{ secrets.DOCKER_USERNAME }}/deploybot:latest
+        run: |
+            docker build -t deploybot .
+            docker tag deploybot ${{ secrets.DOCKER_USERNAME }}/deploybot:latest
+            docker push ${{ secrets.DOCKER_USERNAME }}/deploybot:latest
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
