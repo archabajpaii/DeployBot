@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,5 +19,21 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t deploybot .
+             docker tag deploybot ${{ secrets.DOCKER_USERNAME }}/deploybot:latest
+             docker push ${{ secrets.DOCKER_USERNAME }}/deploybot:latest
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform apply -auto-approve
 
     
